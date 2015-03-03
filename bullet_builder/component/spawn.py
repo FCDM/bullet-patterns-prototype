@@ -1,13 +1,13 @@
 import math
 
-from .component import Component
+from .component import SpawnComponent
 from .motion import LinearMotion
 
 import numbers
 
 __all__ = ["LinearShooter", "RotatingShooter", "LinearRadialSpawner", "RotatingRadialSpawner"]
 
-class _BaseSpawner(Component):
+class _BaseSpawner(SpawnComponent):
 
     def __init__(self, spawn_interval, bullet_speed, bullet_type):
         self._bullet_speed = bullet_speed
@@ -96,7 +96,7 @@ class _RadialSpawn:
                     bullet_speed))
             bullet.add_child(b)
 
-class LinearRadialSpawner(Component):
+class LinearRadialSpawner(SpawnComponent):
 
     def __init__(self, spawn_interval, bullet_count, bullet_speed, bullet_type):
         self._spawn_interval = spawn_interval

@@ -1,10 +1,10 @@
 import math
 
-from .component import Component
+from .component import MotionComponent
 
 __all__ = ["LinearMotion", "Orbitter"]
 
-class LinearMotion(Component):
+class LinearMotion(MotionComponent):
 
     def __init__(self, direction, speed):
         self._speed = speed
@@ -24,7 +24,7 @@ class LinearMotion(Component):
             bullet._origin[1] += self._vy
 
 
-class Orbitter(Component):
+class Orbitter(MotionComponent):
 
     def __init__(self, origin, radius, rotation_speed, initial_angle=0, relative_to_parent=True):
         self._origin = origin

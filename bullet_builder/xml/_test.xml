@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<danmakl>
+	<definitions>
+		<!-- Define common bullet types here -->
+		<bullet name="A"></bullet>
+		<bullet name="B"></bullet>
+		<!-- etc -->
+	</definitions>
+	<timeline>
+		<!-- Place patterns in here -->
+		<pattern>
+			<start>0s</start>
+			<end>never</end>
+
+			<bullet name="generator" parent="core">
+			</bullet>
+			<!-- etc -->
+		</pattern>
+
+		<pattern>
+			<start>5s</start>
+			<end>never</end>
+
+			<bullet name="generator" parent="core">
+			</bullet>
+			<!-- etc -->
+		</pattern>
+		<!-- etc -->
+	</timeline>
+</danmakl>

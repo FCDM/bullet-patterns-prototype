@@ -62,11 +62,6 @@ def LogisticTransition(t0, t1, h0, h1, cutoff=7):
     return lambda x: zeta / (math.exp(a * (t2 - x)) + 1) + h0
 
 
-def SineWave(period, extremum, t0, h0):
-    c = 2 * math.pi / (period)
-    return lambda x: extremum * math.sin(c * (x - t0)) + h0
-
-
 def SinusoidalWave(dx, dy, t0, h0):
     c = math.pi / dx
     dy /= 2
@@ -115,3 +110,9 @@ def DoOnceAt(t0):
 
 def DoAt(points):
 	return Piecewise([lambda x: 1], [lambda x: x in points])
+
+def HeightAtIntervals(heights, intervals):
+	return Piecewise(
+		[lambda x: h for h in heights],
+		[lambda x: i[0] <= x < i[1] for i in intervals]
+		)

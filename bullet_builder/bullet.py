@@ -62,6 +62,8 @@ class Bullet(object):
         self._components = []
         self._check_alive_components = []
 
+        self._prev_point = None
+
         self._extra_init()
 
     def _extra_init(self):
@@ -70,6 +72,7 @@ class Bullet(object):
                 self.add_check_alive(component)
             else:
                 self.add_component(component)
+        self._components.sort(key=lambda x: x.PRECEDENCE, reverse=True)
 
     def set_parent(self, parent):
         self._parent = parent
@@ -83,12 +86,14 @@ class Bullet(object):
             self.add_child(child)
 
     def add_component(self, draw_component):
-        self._components.append(copy.deepcopy(draw_component))
+        self._components.append(draw_component)
+        self._components.sort(key=lambda x: x.PRECEDENCE, reverse=True)
 
     def add_check_alive(self, checker):
-        self._check_alive_components.append(copy.deepcopy(checker))
+        self._check_alive_components.append(checker)
 
     def update(self, time, surface):
+        self._prev_point = self._origin[::]
         for component in self._components:
             component.update(self, time, surface)
 
@@ -100,39 +105,16 @@ class Bullet(object):
 
         self._local_time += 1
 
-    def draw(self, time, surface):
-        for comp in self._draw_components:
-            comp.draw(self, time, surface)
-
-    def move(self, time, surface):
-        for comp in self._motion_components:
-            comp.move(self, time, surface)
-
-    def spawn(self, time, surface):
-        for comp in self._spawn_components:
-            comp.spawn(self, time, surface)
-
-    def extra(self, time, surface):
-        for comp in self._extra_components:
-            comp.extra(self, time, surface)
+    def get_velocity(self):
+        if self._prev_point is None:
+            return None
+        sx, sy = self._prev_point
+        ex, ey = self._origin
+        return (ex - sx, ey - sy)
 
     def isAlive(self, time):
         return all(comp.isAlive(self, time) for comp in self._check_alive_components)
 
 
 class BulletCore(Bullet):
-
     pass
-
-# core = BulletCore(400, 100)
-# game = BulletSimulator((800, 600), core)
-
-# generator = Bullet(0, 0, parent=core)
-# generator.add_component(LinearMotion((0, 1), 1))
-# for i in range(10):
-# 	bullet = BulletA(0, 0)
-# 	bullet.add_component(
-# 		Orbitter([0, 0], 80, 2*math.pi/240, initial_angle=2*math.pi/10 * i))
-# 	generator.add_child(bullet)
-
-# game.start()

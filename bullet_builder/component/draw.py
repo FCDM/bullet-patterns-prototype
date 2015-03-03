@@ -35,16 +35,17 @@ class _BaseLine(Component):
 		self._colour = colour
 		self._length = length
 		self._thickness = thickness
-		self._prev_point = None
 
 	def _get_points(self, bullet):
-		px, py = self._prev_point
+		v = bullet.get_velocity()
+		if v is None:
+			return v
+		m = math.sqrt(v[0]**2 + v[1]**2)/self._length
 		x, y = bullet._origin
-		m = math.sqrt((x - px)**2 + (y - py)**2)/self._length
-		if m == 0:
-			return bullet._origin, bullet._origin
 		x1, y1 = int(x), int(y)
-		x2, y2 = int(x + (x - px)/m), int(y + (y - py)/m)
+		if m == 0:
+			return (x1, y1), (x1, y1)
+		x2, y2 = int(x + v[0]/m), int(y + v[1]/m)
 
 		return (x1, y1), (x2, y2)
 
@@ -55,17 +56,14 @@ class DirectionalLine(_BaseLine):
 		super(DirectionalLine, self).__init__(colour, length, thickness)
 
 	def update(self, bullet, time, surface):
-		if self._prev_point is None:
-			self._prev_point = bullet._origin[::]
+		points = self._get_points(bullet)
+		if points is None:
 			return
-
-		(x1, y1), (x2, y2) = self._get_points(bullet)
+		(x1, y1), (x2, y2) = points
 
 		pygame.draw.line(surface, self._colour, (x1, y1), (x2, y2), self._thickness)
 		pygame.draw.circle(surface, self._colour, (x1, y1), int(self._thickness/2) - 1)
 		pygame.draw.circle(surface, self._colour, (x2, y2), int(self._thickness/2) - 1)
-
-		self._prev_point = bullet._origin[::]
 
 class GlowingDirectionalLine(_BaseLine):
 
@@ -73,11 +71,10 @@ class GlowingDirectionalLine(_BaseLine):
 		super(GlowingDirectionalLine, self).__init__(colour, length, thickness)
 
 	def update(self, bullet, time, surface):
-		if self._prev_point is None:
-			self._prev_point = bullet._origin[::]
+		points = self._get_points(bullet)
+		if points is None:
 			return
-
-		(x1, y1), (x2, y2) = self._get_points(bullet)
+		(x1, y1), (x2, y2) = points
 
 		pygame.draw.line(surface, self._colour, (x1, y1), (x2, y2), self._thickness)
 		pygame.draw.circle(surface, self._colour, (x1, y1), int(self._thickness/2) - 1)
@@ -86,5 +83,3 @@ class GlowingDirectionalLine(_BaseLine):
 		pygame.draw.line(surface, (255, 255, 255), (x1, y1), (x2, y2), max(self._thickness - 3, 0))
 		pygame.draw.circle(surface, (255, 255, 255), (x1, y1), max(int(self._thickness/2) - 3, 0))
 		pygame.draw.circle(surface, (255, 255, 255), (x2, y2), max(int(self._thickness/2) - 3, 0))
-
-		self._prev_point = bullet._origin[::]
